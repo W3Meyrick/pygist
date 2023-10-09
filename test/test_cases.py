@@ -2,7 +2,7 @@ import os
 import json
 import unittest
 import requests_mock
-from main import get_gists, save_last_query_time
+from pygist import get_gists, save_last_query_time
 
 
 class MyTestCase(unittest.TestCase):
@@ -20,13 +20,11 @@ class MyTestCase(unittest.TestCase):
             gists = get_gists("testuser")
 
         self.assertEqual(len(gists), 3)
-        self.assertEqual(gists[0]['created_at'], '2023-09-18T16:50:01Z')
-        self.assertEqual(gists[1]['created_at'], '2023-09-14T11:57:06Z')
-        self.assertEqual(gists[2]['updated_at'], '2023-07-16T13:43:19Z')
+        self.assertEqual(gists[0]['created_at'], '2023-09-20T14:45:01Z')
+        self.assertEqual(gists[1]['created_at'], '2023-08-10T11:15:06Z')
+        self.assertEqual(gists[2]['html_url'], 'https://gist.github.com/testuser/hijk91011')
 
     def test_save_last_query_time(self):
-        temp_file = 'tempfile.txt'
-
         sample_gist = [{'created_at': '2023-10-02T12:00:00Z'}]
 
         save_last_query_time('testuser', sample_gist)

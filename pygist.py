@@ -17,14 +17,14 @@ def get_gists(username):
         
         if response.status_code != 200:
             if response.status_code == 404:
-                print('Error: GitHub user "' + username + '" not found.')
+                pprint('Error: GitHub user "' + username + '" not found.')
             else:
                 response.raise_for_status()
                 exit(255)
         
         page_gists = response.json()
         if not page_gists:
-            break  # No more gists to retrieve
+            break
         gists.extend(page_gists)
         page += 1
 
@@ -52,8 +52,8 @@ def main():
     config_file = './pygist.' + args.username
 
     if not os.path.isfile(config_file):
-        print('No previous entries for user "' + args.username + '"')
-        print('Creating user file: ' + config_file)
+        pprint('No previous entries for user "' + args.username + '"')
+        pprint('Creating user file: ' + config_file)
         for item in gists:
             pprint("Created Date: " + item["created_at"] + " URL: " + item["html_url"])
         save_last_query_time(args.username, gists)
@@ -66,16 +66,22 @@ def main():
         last_query_time = datetime.strptime(last_query, '%Y-%m-%dT%H:%M:%SZ')
         gist_created_date = datetime.strptime(gists[0]['created_at'], '%Y-%m-%dT%H:%M:%SZ')
         if gist_created_date > last_query_time:
-            print('User "' + args.username + '" has created new gist(s) since the last query.')
+            pprint('User "' + args.username + '" has created new gist(s) since the last query.')
 
             for item in gists:
                 item_created_at = datetime.strptime(item["created_at"], '%Y-%m-%dT%H:%M:%SZ')
                 if item_created_at > last_query_time:
                     pprint("Created Date: " + item["created_at"] + " URL: " + item["html_url"])
-
+            
+            try:
+                with open(config_file, 'r') as user_file:
+                    user_file.seek(0, 0)
+            except Exception as e:
+                raise
+            
             save_last_query_time(args.username, gists)
         else:
-            print('User "' + args.username + '" has not created any new gists since the last query.')
+            pprint('User "' + args.username + '" has not created any new gists since the last query.')
     exit(0)
 
 if __name__ == "__main__":
